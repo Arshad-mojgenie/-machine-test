@@ -12,9 +12,10 @@ import {
   Table
 } from 'react-bootstrap';
 // import PaginationUi from './CommonComponents/Pagination'
-import { GetAllCharacter, GetFilterCharacterByName, SortCharacterOrder, SubmitSearchCharacter } from './Redux/Actions/characterActions';
+import { GetAllCharacter, GetFilterCharacterByName, SubmitSearchCharacter } from './Redux/Actions/characterActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import PaginationUi from './CommonComponents/Pagination';
 
 const App = () => {
 
@@ -170,9 +171,9 @@ const App = () => {
       </Container>
 
       <Container fluid style={{ padding: '30px' }}>
-        <Row>
-          {/* <Col xs={6}>{PaginationUi()}</Col> */}
-          <Col xs={6}><InputGroup className="mb-3">
+        <Row className='flex justify-content-between' >
+          <Col xs={6}>{PaginationUi()}</Col>
+          <Col xs={2}><InputGroup className="mb-3">
             <InputGroup.Text id="inputGroup-sizing-lg">Limit</InputGroup.Text>
             <DropdownButton
               variant="outline-secondary"
