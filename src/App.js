@@ -12,12 +12,11 @@ import {
   Table
 } from 'react-bootstrap';
 import PaginationUi from './CommonComponents/Pagination'
-import { GetAllCharacter, GetFilterCharacterByName } from './Redux/Actions/characterActions';
+import { GetAllCharacter, GetFilterCharacterByName, SortCharacterOrder } from './Redux/Actions/characterActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const App = () => {
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,23 +25,35 @@ const App = () => {
 
   const character_list = useSelector(state => state.character.all_character ? state.character.all_character : [])
   const [searchTerm, setSearchTerm] = useState('');
+  const [orderItem, serOrderItem] = useState('Asn');
+  const [race, setRace] = useState('Human');
 
   const handleSearchByName = (e) => {
     setSearchTerm(e.target.value);
+    dispatch(GetFilterCharacterByName(e.target.value))
   }
   const handleSearchBtnClk = (e) => {
     dispatch(GetFilterCharacterByName(searchTerm))
   }
 
-  const handleSortDpnChange = () => {
-    alert('hi');
+  const handleSortDpnChange = (type) => {
+    serOrderItem(type);
+    dispatch(SortCharacterOrder(type))
+  }
 
-    // desc
+  const handleSelect = () => {
+    serOrderItem();
+  }
 
+  const handleSubmitBtnClk = (e) => {
+    e.preventDefault();
+    console.log("orderItem", orderItem);
+    console.log("reac", race);
   }
 
   return (
     <>
+
 
       <Row className="mx-0">
         <Navbar expand="lg" bg="dark" variant="dark">
@@ -70,12 +81,13 @@ const App = () => {
               <DropdownButton
                 variant="outline-secondary"
                 title="by name (asc/dec)"
-
+                onSelect={handleSelect}
               >
+
                 <Dropdown.Item
-                  onClick={handleSortDpnChange}>Asc</Dropdown.Item>
+                  onClick={() => handleSortDpnChange("Asc")}>Asc</Dropdown.Item>
                 <Dropdown.Item
-                  onClick={handleSortDpnChange}>Desc</Dropdown.Item>
+                  onClick={() => handleSortDpnChange("Desc")}>Desc</Dropdown.Item>
 
               </DropdownButton>
             </InputGroup>
@@ -90,14 +102,11 @@ const App = () => {
               <InputGroup.Text id="inputGroup-sizing-lg">Race</InputGroup.Text>
               <DropdownButton
                 variant="outline-secondary"
-                title="list of reces multisalaction"
-                id="input-group-dropdown-2"
-                align="end"
               >
-                <Dropdown.Item href="#">Action</Dropdown.Item>
-                <Dropdown.Item href="#">Another action</Dropdown.Item>
-                <Dropdown.Item href="#">Something else here</Dropdown.Item>
-                <Dropdown.Item href="#">Separated link</Dropdown.Item>
+                <Dropdown.Item >Human</Dropdown.Item>
+                <Dropdown.Item >Elian</Dropdown.Item>
+                <Dropdown.Item >Elf</Dropdown.Item>
+                <Dropdown.Item >Dwarf</Dropdown.Item>
               </DropdownButton>
             </InputGroup>
           </Col>
@@ -107,18 +116,18 @@ const App = () => {
               <DropdownButton
                 variant="outline-secondary"
                 title="Male/Female/Any"
-                id="input-group-dropdown-2"
-                align="end"
+                value={"male"}
+
               >
-                <Dropdown.Item href="#">Action</Dropdown.Item>
-                <Dropdown.Item href="#">Another action</Dropdown.Item>
-                <Dropdown.Item href="#">Something else here</Dropdown.Item>
-                <Dropdown.Item href="#">Separated link</Dropdown.Item>
+                <Dropdown.Item >Male</Dropdown.Item>
+                <Dropdown.Item >Female</Dropdown.Item>
+
               </DropdownButton>
             </InputGroup>
           </Col>
 
-          <Col><Button variant="secondary">Submit</Button>{' '}</Col>
+          <Col><Button onClick={handleSubmitBtnClk} variant="secondary">Submit</Button></Col>
+
         </Row>
       </Container>
 
@@ -163,8 +172,6 @@ const App = () => {
             <DropdownButton
               variant="outline-secondary"
               title="5"
-              id="input-group-dropdown-2"
-              align="end"
             >
               <Dropdown.Item >5</Dropdown.Item>
               <Dropdown.Item >10</Dropdown.Item>

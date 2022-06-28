@@ -22,7 +22,7 @@ export const GetCharacter = (id) => (dispatch) => {
 
 export const GetAllCharacter = () => (dispatch) => {
     dispatch({ type: 'NOC_ALL_REQUEST', })
-    axios.get(`/character?limit=5`)
+    axios.get(`/character?limit=10`)
         .then(res => {
             if (res.data) {
                 dispatch({
@@ -57,8 +57,7 @@ export const GetFilterCharacterByName = (name) => (dispatch) => {
         })
 }
 
-// desc
-export const GetSortCharacterByName = (type) => (dispatch) => {
+export const SortCharacterOrder = (type) => (dispatch) => {
     dispatch({ type: 'NOC_ALL_REQUEST', })
     axios.get(`/character?sort=name:${type}`)
         .then(res => {
