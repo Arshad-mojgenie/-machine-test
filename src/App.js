@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Button,
   Row,
@@ -11,21 +11,48 @@ import {
   Dropdown,
   Table
 } from 'react-bootstrap';
-
-import PaginationUi from './ComonComponents/Pagination'
+import PaginationUi from './CommonComponents/Pagination'
+import { GetAllCharacter, GetFilterCharacterByName } from './Redux/Actions/characterActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const App = () => {
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(GetAllCharacter());
+  }, [])
+
+  const character_list = useSelector(state => state.character.all_character ? state.character.all_character : [])
+  const [searchTerm, setSearchTerm] = useState('');
+
+
+
+  const handleSearchByName = (e) => {
+    setSearchTerm(e.target.value);
+  }
+  const handleSearchBtnClk = (e) => {
+    dispatch(GetFilterCharacterByName(e.target.value))
+  }
+
+  const handleSortDpnChange = () => {
+    alert('hi');
+
+    // desc
+
+  }
+
   return (
     <>
 
       <Row className="mx-0">
         <Navbar expand="lg" bg="dark" variant="dark">
           <Container className="justify-content-center">
-            <Navbar.Brand>Characters</Navbar.Brand>
+            <Navbar.Brand >Characters</Navbar.Brand>
           </Container>
         </Navbar>
       </Row>
-
 
       <Container fluid style={{ padding: '30px' }}>
         <Row>
@@ -34,8 +61,7 @@ const App = () => {
               <InputGroup.Text id="inputGroup-sizing-lg">Search</InputGroup.Text>
               <Form.Control
                 placeholder="by name"
-                aria-label="Username"
-                aria-describedby="basic-addon1"
+                onChange={handleSearchByName}
               />
             </InputGroup>
           </Col>
@@ -46,13 +72,13 @@ const App = () => {
               <DropdownButton
                 variant="outline-secondary"
                 title="by name (asc/dec)"
-                id="input-group-dropdown-2"
-                align="end"
+
               >
-                <Dropdown.Item href="#">Action</Dropdown.Item>
-                <Dropdown.Item href="#">Another action</Dropdown.Item>
-                <Dropdown.Item href="#">Something else here</Dropdown.Item>
-                <Dropdown.Item href="#">Separated link</Dropdown.Item>
+                <Dropdown.Item
+                  onClick={handleSortDpnChange}>Asc</Dropdown.Item>
+                <Dropdown.Item
+                  onClick={handleSortDpnChange}>Desc</Dropdown.Item>
+
               </DropdownButton>
             </InputGroup>
           </Col>
@@ -93,6 +119,7 @@ const App = () => {
               </DropdownButton>
             </InputGroup>
           </Col>
+
           <Col><Button variant="secondary">Submit</Button>{' '}</Col>
         </Row>
       </Container>
@@ -110,41 +137,21 @@ const App = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                <td>@mdo</td>
-              </tr>
+              {
+                character_list.map(item => {
+                  return (
+                    <tr>
+                      <td>{item._id}</td>
+                      <td>{item.name}</td>
+                      <td>{item.race}</td>
+                      <td>{item.gender}</td>
+                      <td>
+                        <Link to={`/character-details/${item._id}`}>Detals</Link>
+                      </td>
+                    </tr>
+                  )
+                })
+              }
             </tbody>
           </Table>
         </Row>
@@ -169,7 +176,6 @@ const App = () => {
           </Col>
         </Row>
       </Container>
-
     </>
   )
 }
