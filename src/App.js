@@ -27,13 +27,11 @@ const App = () => {
   const character_list = useSelector(state => state.character.all_character ? state.character.all_character : [])
   const [searchTerm, setSearchTerm] = useState('');
 
-
-
   const handleSearchByName = (e) => {
     setSearchTerm(e.target.value);
   }
   const handleSearchBtnClk = (e) => {
-    dispatch(GetFilterCharacterByName(e.target.value))
+    dispatch(GetFilterCharacterByName(searchTerm))
   }
 
   const handleSortDpnChange = () => {
@@ -58,7 +56,7 @@ const App = () => {
         <Row>
           <Col>
             <InputGroup className="mb-3">
-              <InputGroup.Text id="inputGroup-sizing-lg">Search</InputGroup.Text>
+              <InputGroup.Text onClick={handleSearchBtnClk} id="inputGroup-sizing-lg">Search</InputGroup.Text>
               <Form.Control
                 placeholder="by name"
                 onChange={handleSearchByName}
