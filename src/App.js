@@ -11,12 +11,13 @@ import {
   Dropdown,
   Table
 } from 'react-bootstrap';
-import PaginationUi from './CommonComponents/Pagination'
-import { GetAllCharacter, GetFilterCharacterByName, SortCharacterOrder } from './Redux/Actions/characterActions';
+// import PaginationUi from './CommonComponents/Pagination'
+import { GetAllCharacter, GetFilterCharacterByName, SortCharacterOrder, SubmitSearchCharacter } from './Redux/Actions/characterActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const App = () => {
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -25,8 +26,10 @@ const App = () => {
 
   const character_list = useSelector(state => state.character.all_character ? state.character.all_character : [])
   const [searchTerm, setSearchTerm] = useState('');
-  const [orderItem, serOrderItem] = useState('Asn');
+  const [orderItem, setOrderItem] = useState('ase');
   const [race, setRace] = useState('Human');
+  const [gender, setGender] = useState('Male');
+  const [limit, setLimit] = useState(5);
 
   const handleSearchByName = (e) => {
     setSearchTerm(e.target.value);
@@ -37,18 +40,22 @@ const App = () => {
   }
 
   const handleSortDpnChange = (type) => {
-    serOrderItem(type);
-    dispatch(SortCharacterOrder(type))
+    setOrderItem(type);
   }
 
-  const handleSelect = () => {
-    serOrderItem();
+  const handleLimitChange = (limit) => {
+    setLimit(limit)
+    dispatch(SubmitSearchCharacter(limit, gender, race, orderItem))
+
   }
 
-  const handleSubmitBtnClk = (e) => {
-    e.preventDefault();
+
+  const handleSubmitBtnClk = () => {
+    dispatch(SubmitSearchCharacter(limit, gender, race, orderItem))
     console.log("orderItem", orderItem);
-    console.log("reac", race);
+    console.log("race", race);
+    console.log("Genter", gender);
+    console.log("limit", limit)
   }
 
   return (
@@ -80,14 +87,14 @@ const App = () => {
               <InputGroup.Text id="inputGroup-sizing-lg">Sort By</InputGroup.Text>
               <DropdownButton
                 variant="outline-secondary"
-                title="by name (asc/dec)"
-                onSelect={handleSelect}
+                title={orderItem}
+
               >
 
                 <Dropdown.Item
-                  onClick={() => handleSortDpnChange("Asc")}>Asc</Dropdown.Item>
+                  onClick={() => handleSortDpnChange("asc")}>Asc</Dropdown.Item>
                 <Dropdown.Item
-                  onClick={() => handleSortDpnChange("Desc")}>Desc</Dropdown.Item>
+                  onClick={() => handleSortDpnChange("desc")}>Desc</Dropdown.Item>
 
               </DropdownButton>
             </InputGroup>
@@ -102,11 +109,11 @@ const App = () => {
               <InputGroup.Text id="inputGroup-sizing-lg">Race</InputGroup.Text>
               <DropdownButton
                 variant="outline-secondary"
+                title={race}
               >
-                <Dropdown.Item >Human</Dropdown.Item>
-                <Dropdown.Item >Elian</Dropdown.Item>
-                <Dropdown.Item >Elf</Dropdown.Item>
-                <Dropdown.Item >Dwarf</Dropdown.Item>
+                <Dropdown.Item onClick={() => { setRace("Human") }}  >Human</Dropdown.Item>
+                <Dropdown.Item onClick={() => { setRace("Elf") }} >Elf</Dropdown.Item>
+                <Dropdown.Item onClick={() => { setRace("Dwarf") }}  >Dwarf</Dropdown.Item>
               </DropdownButton>
             </InputGroup>
           </Col>
@@ -115,12 +122,10 @@ const App = () => {
               <InputGroup.Text id="inputGroup-sizing-lg">Genter</InputGroup.Text>
               <DropdownButton
                 variant="outline-secondary"
-                title="Male/Female/Any"
-                value={"male"}
-
+                title={gender}
               >
-                <Dropdown.Item >Male</Dropdown.Item>
-                <Dropdown.Item >Female</Dropdown.Item>
+                <Dropdown.Item onClick={() => { setGender("Male") }} >Male</Dropdown.Item>
+                <Dropdown.Item onClick={() => { setGender("Female") }} >Female</Dropdown.Item>
 
               </DropdownButton>
             </InputGroup>
@@ -145,10 +150,10 @@ const App = () => {
             </thead>
             <tbody>
               {
-                character_list.map(item => {
+                character_list.map((item, index) => {
                   return (
                     <tr>
-                      <td>{item._id}</td>
+                      <td>{index + 1}</td>
                       <td>{item.name}</td>
                       <td>{item.race}</td>
                       <td>{item.gender}</td>
@@ -166,21 +171,22 @@ const App = () => {
 
       <Container fluid style={{ padding: '30px' }}>
         <Row>
-          <Col xs={6}>{PaginationUi()}</Col>
+          {/* <Col xs={6}>{PaginationUi()}</Col> */}
           <Col xs={6}><InputGroup className="mb-3">
             <InputGroup.Text id="inputGroup-sizing-lg">Limit</InputGroup.Text>
             <DropdownButton
               variant="outline-secondary"
-              title="5"
+              title={limit}
             >
-              <Dropdown.Item >5</Dropdown.Item>
-              <Dropdown.Item >10</Dropdown.Item>
-              <Dropdown.Item >15</Dropdown.Item>
+              <Dropdown.Item onClick={() => handleLimitChange(5)} >5</Dropdown.Item>
+              <Dropdown.Item onClick={() => handleLimitChange(10)} >10</Dropdown.Item>
+              <Dropdown.Item onClick={() => handleLimitChange(15)} >15</Dropdown.Item>
             </DropdownButton>
           </InputGroup>
           </Col>
         </Row>
       </Container>
+
     </>
   )
 }
